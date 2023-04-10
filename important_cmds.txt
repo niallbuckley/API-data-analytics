@@ -1,0 +1,9 @@
+Get attachments based on the Test Cycle Key:
+curl -i https://qtmcloud.qmetry.com/rest/api/latest/testcycles/EEPD-TR-43226/attachment/ \
+-H  'apikey: [PRIVATE]'
+
+
+Get list of projects (Get proj ID):
+curl -i 'https://qtmcloud.qmetry.com/rest/api/latest/projects/' \               
+-H  'content-type: json' \
+-H  'apikey: [PRIVATE]'
