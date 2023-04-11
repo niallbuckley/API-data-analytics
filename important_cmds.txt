@@ -3,7 +3,7 @@ curl -i https://qtmcloud.qmetry.com/rest/api/latest/testcycles/EEPD-TR-43226/att
 -H  'apikey: [PRIVATE]'
 
 How to get the Key using the Proj Id and the Test Cycle ID?
-curl  -i 'https://qtmcloud.qmetry.com/rest/api/latest/testcycles/search/' -H 'Content-Type: application/json' -H  'apikey: [PRIVATE]' --data-raw '{"filter":{"projectId":"10453","folderId":-1}}'
+curl  -i 'https://qtmcloud.qmetry.com/rest/api/latest/testcycles/search/' -H 'Content-Type: application/json' -H  'apikey: [PRIVATE]' --data-raw '{"filter":{"projectId":"10453","folderId":521282}}'
 
 Get list of projects (Get proj ID):
 curl -i 'https://qtmcloud.qmetry.com/rest/api/latest/projects/' \               
