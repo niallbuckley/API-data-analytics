@@ -4,7 +4,7 @@ import requests
 import Response
 import QMetryExecutionResult
 import json
-import urllib.request
+import subprocess
 
 def __get_linked_test_cases_of_test_cycle(id):
     pload={"filter": {"folderId":-1}}
@@ -37,9 +37,9 @@ def __get_test_cycle_id(key):
         return str(id)
 
 def download_zip(zip_url):
-    filename = "your-zip-file.zip"  # Replace with the desired file name
-    
-    urllib.request.urlretrieve(zip_url, filename)
+    #filename = "./csv/" + zip_url + ".zip"
+    filename = "auto_data_" + id
+    subprocess.run(["wget", zip_url])
 
 
 
@@ -51,7 +51,7 @@ def __get_test_cycle_attachments(key):
             if objct["name"] == 'logfiles.zip':
                 #if seen before. continue
                 print (objct["url"])
-                #download_zip(objct["url"])
+                download_zip(objct["url"])
 
 
      
@@ -64,6 +64,7 @@ def __get_test_cycle_list():
         for key_obj in response.json()["data"]:
             #print (key_obj["key"])
             __get_test_cycle_attachments(key_obj["key"])
+            break
      else:
         print ("Error getting the list of test cycle keys response code: " + str(response.status_code))
 
