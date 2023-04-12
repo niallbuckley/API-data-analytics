@@ -1,46 +1,23 @@
 
 import QMetryConst
 import requests
-import Response
-import QMetryExecutionResult
-import json
 import subprocess
+import glob
+import shutil
 
-def __get_linked_test_cases_of_test_cycle(id):
-    pload={"filter": {"folderId":-1}}
-    response = requests.post(QMetryConst.ENDP_TEST_CYCLES_BASE+id+QMetryConst.ENDP_GET_LINKED_TEST_CASES_OF_TEST_CYCLE, json=pload, headers=QMetryConst.HEADER)
-    print ("response: ", response)
-    Response.check_response(response)
-    found_test_cases=len(response.json()["data"])
-    if found_test_cases > 0:
-        test_cases = response.json()["data"]
-    else:
-        print("Test Cycle contain no Test Cases. Please double check Test Cycle in QMetry.")
-        exit()
 
-    return test_cases
-
-def __get_test_cycle_id(key):
-        pload = {"filter":{"projectId": QMetryConst.PROJECT_ID,"key": key}}
-        response = requests.post(QMetryConst.ENDP_TEST_CYCLES_BASE+QMetryConst.ENDP_TEST_CYCLES_SEARCH, json=pload, headers=QMetryConst.HEADER)
-        Response.check_response(response)
-        found_test_cycles=len(response.json()["data"])
-        if found_test_cycles == 1:
-            id = response.json()["data"][0]["id"]
-        elif found_test_cycles == 0:
-            print("Test Cycle {} not found in QMetry. Please make sure that Test Cycle already exist in QMetry project.".format(key))
-            exit()
-        else:
-            print("Something went wrong during searching Test Cycle in QMetry. Found {} Test Cycles. Please check response:\n{}".format(found_test_cycles,response.json()))
-            exit()
-
-        return str(id)
-
-def download_zip(zip_url):
-    #filename = "./csv/" + zip_url + ".zip"
+def download_zip(zip_url, id):
     filename = "auto_data_" + id
-    subprocess.run(["wget", zip_url])
+    subprocess.run(["wget", zip_url, "-O", filename])
+    subprocess.run(["unzip", "-y", filename])
 
+def copy_csv_files():
+    source_pattern = "./logfiles/app/stat_with_test_result-*"
+    destination_dir = "./results/" 
+
+    matching_files = glob.glob(source_pattern)
+    for file_path in matching_files:
+        shutil.copy(file_path, destination_dir)
 
 
 def __get_test_cycle_attachments(key):
@@ -50,11 +27,9 @@ def __get_test_cycle_attachments(key):
         for objct in response.json()["data"]:
             if objct["name"] == 'logfiles.zip':
                 #if seen before. continue
-                print (objct["url"])
-                download_zip(objct["url"])
+                print (objct["url"], objct["id"])
+                download_zip(objct["url"], str(objct["id"]))
 
-
-     
 
 # curl  -i 'https://qtmcloud.qmetry.com/rest/api/latest/testcycles/search/' -H 'Content-Type: application/json' 
 def __get_test_cycle_list():
@@ -62,9 +37,12 @@ def __get_test_cycle_list():
      response = requests.post(QMetryConst.ENDP_TEST_CYCLES_BASE + 'search/', json=pload, headers=QMetryConst.HEADER)
      if response.ok:
         for key_obj in response.json()["data"]:
-            #print (key_obj["key"])
             __get_test_cycle_attachments(key_obj["key"])
-            break
+        # Clean up 
+        # Extract all the useful data from the logs
+        copy_csv_files()
+        # Delete Logs and auto_data from directory
+
      else:
         print ("Error getting the list of test cycle keys response code: " + str(response.status_code))
 
