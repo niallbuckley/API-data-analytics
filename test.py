@@ -9,7 +9,15 @@ import shutil
 def download_zip(zip_url, id):
     filename = "auto_data_" + id
     subprocess.run(["wget", zip_url, "-O", filename])
-    subprocess.run(["unzip", "-y", filename])
+    subprocess.run(["unzip", "-o", filename])
+
+def delete_log_files():
+    subprocess.run(["rm", "-rf", "logfiles/"])
+    source_pattern = "auto_data_*"
+    files_to_del = glob.glob(source_pattern)
+    for file in files_to_del:
+        subprocess.run(["rm", file])
+
 
 def copy_csv_files():
     source_pattern = "./logfiles/app/stat_with_test_result-*"
@@ -17,6 +25,7 @@ def copy_csv_files():
 
     matching_files = glob.glob(source_pattern)
     for file_path in matching_files:
+        print (file_path)
         shutil.copy(file_path, destination_dir)
 
 
@@ -36,12 +45,17 @@ def __get_test_cycle_list():
      pload = {"filter":{"projectId":"10453","folderId":521282}}
      response = requests.post(QMetryConst.ENDP_TEST_CYCLES_BASE + 'search/', json=pload, headers=QMetryConst.HEADER)
      if response.ok:
+        count = 0
         for key_obj in response.json()["data"]:
+            if count == 2:
+                break
             __get_test_cycle_attachments(key_obj["key"])
+            count += 1
         # Clean up 
         # Extract all the useful data from the logs
         copy_csv_files()
         # Delete Logs and auto_data from directory
+        delete_log_files()
 
      else:
         print ("Error getting the list of test cycle keys response code: " + str(response.status_code))
