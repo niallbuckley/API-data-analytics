@@ -25,13 +25,11 @@ def copy_csv_files():
 
     matching_files = glob.glob(source_pattern)
     for file_path in matching_files:
-        print (file_path)
         shutil.copy(file_path, destination_dir)
 
 
 def __get_test_cycle_attachments(key):
     response = requests.get(QMetryConst.ENDP_TEST_CYCLES_BASE + key + '/attachment/', headers=QMetryConst.HEADER)
-    #print (response.json())
     if response.json()["total"] > 0:
         for objct in response.json()["data"]:
             if objct["name"] == 'logfiles.zip':
@@ -40,21 +38,20 @@ def __get_test_cycle_attachments(key):
                 download_zip(objct["url"], str(objct["id"]))
 
 
-# curl  -i 'https://qtmcloud.qmetry.com/rest/api/latest/testcycles/search/' -H 'Content-Type: application/json' 
 def __get_test_cycle_list():
      pload = {"filter":{"projectId":"10453","folderId":521282}}
-     response = requests.post(QMetryConst.ENDP_TEST_CYCLES_BASE + 'search/', json=pload, headers=QMetryConst.HEADER)
+     params = '?maxResults=100&startAt=300'
+     response = requests.post(QMetryConst.ENDP_TEST_CYCLES_BASE + 'search/' + params,  json=pload, headers=QMetryConst.HEADER)
      if response.ok:
         count = 0
+        print (response.json())
         for key_obj in response.json()["data"]:
-            if count == 2:
-                break
+            print ("INDEX: ", count, "  KEY: ", key_obj["key"])
             __get_test_cycle_attachments(key_obj["key"])
             count += 1
-        # Clean up 
         # Extract all the useful data from the logs
         copy_csv_files()
-        # Delete Logs and auto_data from directory
+        # Delete useless logs and auto_data from directory
         delete_log_files()
 
      else:
@@ -62,9 +59,8 @@ def __get_test_cycle_list():
 
 
 if __name__ == '__main__':
-    #linked = __get_linked_test_cases_of_test_cycle("EEPD-TR-43388")
-    #print (linked)
     pp = __get_test_cycle_list()
-    #print (pp)
+    
+
     
 
