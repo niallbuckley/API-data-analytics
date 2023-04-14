@@ -44,13 +44,14 @@ def __get_test_cycle_list():
      response = requests.post(QMetryConst.ENDP_TEST_CYCLES_BASE + 'search/' + params,  json=pload, headers=QMetryConst.HEADER)
      if response.ok:
         count = 0
-        print (response.json())
         for key_obj in response.json()["data"]:
             print ("INDEX: ", count, "  KEY: ", key_obj["key"])
             __get_test_cycle_attachments(key_obj["key"])
             count += 1
+
         # Extract all the useful data from the logs
         copy_csv_files()
+
         # Delete useless logs and auto_data from directory
         delete_log_files()
 
