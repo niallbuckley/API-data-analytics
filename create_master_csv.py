@@ -40,6 +40,8 @@ try:
 
     # Save the merged data to the master CSV file
     combined_df.to_csv('./results/master_file.csv', index=False)
+    
+    print ("Added new results to add to master.csv!")
 
 except ValueError:
     print ("Did not gather any new results to add to master.csv!")
