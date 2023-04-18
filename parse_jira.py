@@ -30,17 +30,22 @@ def copy_csv_files():
 
 def __get_test_cycle_attachments(key):
     response = requests.get(QMetryConst.ENDP_TEST_CYCLES_BASE + key + '/attachment/', headers=QMetryConst.HEADER)
+    if not response.ok:
+        print ("ERROR couldn't get attachment for key: ", key, " RETRY!!")
+        return
+    
     if response.json()["total"] > 0:
         for objct in response.json()["data"]:
             if objct["name"] == 'logfiles.zip':
                 #if seen before. continue
                 print (objct["url"], objct["id"])
                 download_zip(objct["url"], str(objct["id"]))
+    
 
 
 def __get_test_cycle_list():
      pload = {"filter":{"projectId":"10453","folderId":521282}}
-     params = '?maxResults=100&startAt=300'
+     params = '?maxResults=100'
      response = requests.post(QMetryConst.ENDP_TEST_CYCLES_BASE + 'search/' + params,  json=pload, headers=QMetryConst.HEADER)
      if response.ok:
         count = 0
