@@ -4,6 +4,7 @@ import requests
 import subprocess
 import glob
 import shutil
+import sys
 
 
 def download_zip(zip_url, id):
@@ -31,7 +32,7 @@ def copy_csv_files():
 def __get_test_cycle_attachments(key):
     response = requests.get(QMetryConst.ENDP_TEST_CYCLES_BASE + key + '/attachment/', headers=QMetryConst.HEADER)
     if not response.ok:
-        print ("ERROR couldn't get attachment for key: ", key, " RETRY!!")
+        print ("ERROR couldn't get attachment for key: ", key, "  ", response.status_code,  " RETRY!!")
         return
     
     if response.json()["total"] > 0:
@@ -62,11 +63,8 @@ def __get_test_cycle_list():
 
      else:
         print ("Error getting the list of test cycle keys response code: " + str(response.status_code))
+        sys.exit(1)
 
 
 if __name__ == '__main__':
-    pp = __get_test_cycle_list()
-    
-
-    
-
+    __get_test_cycle_list()
