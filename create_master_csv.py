@@ -36,10 +36,14 @@ for csv_file in csv_files:
     seen_files.add(os.path.basename(csv_file))
 
 try:
-    combined_df = pd.concat(dfs)
+    master_csv_file = './results/master_file.csv'
+    all_runs_df = pd.read_csv(master_csv_file)
+
+    this_run_df = pd.concat(dfs)
+    combined_df = pd.concat([all_runs_df, this_run_df], ignore_index=True)
 
     # Save the merged data to the master CSV file
-    combined_df.to_csv('./results/master_file.csv', index=False)
+    combined_df.to_csv(master_csv_file, index=False)
     
     print ("Added new results to add to master.csv!")
 
