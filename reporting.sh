@@ -10,4 +10,4 @@ else
     exit 1
 fi
 python3 create_master_csv.py
-jupyter nbconvert --execute --to html --TemplateExporter.exclude_input=True automation_performance_analysis.ipynb
+#jupyter nbconvert --execute --to html --TemplateExporter.exclude_input=True automation_performance_analysis.ipynb
