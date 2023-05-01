@@ -47,7 +47,7 @@ def __get_test_cycle_attachments(key):
 
 def __get_test_cycle_list(seen_keys):
      pload = {"filter":{"projectId":"10453","folderId":521282}}
-     params = '?maxResults=100&startAt=100'
+     params = '?maxResults=100'
      # &startAt=100
      response = requests.post(QMetryConst.ENDP_TEST_CYCLES_BASE + 'search/' + params,  json=pload, headers=QMetryConst.HEADER)
      if response.ok:
