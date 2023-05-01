@@ -55,10 +55,12 @@ def __get_test_cycle_list(seen_keys):
         for key_obj in response.json()["data"]:
             print ("INDEX: ", count, "  KEY: ", key_obj["key"])
             if key_obj["key"] in seen_keys:
+                print (key_obj["key"], " seen before -- SKIPPING")
                 continue
             res = __get_test_cycle_attachments(key_obj["key"])
-            if res:
+            if res == 0:
                 seen_keys.add(key_obj["key"])
+                print (key_obj["key"], " added to seen keys!")
             count += 1
 
         # Extract all the useful data from the logs
