@@ -72,10 +72,13 @@ def __get_test_cycle_list(seen_keys):
             res = __get_test_cycle_attachments(key_obj["key"])
             if res == 0:
                 seen_keys.add(key_obj["key"])
-                # Extract all the useful data from the logs
-                copy_csv_file(key_obj["key"])
-                print (key_obj["key"], " added to seen keys!")
-            count += 1
+		try:
+                    # Extract all the useful data from the logs
+		    copy_csv_file(key_obj["key"])
+		    count += 1
+		except Exception as e:
+		    print("Error no csv file! ", e)
+		print (key_obj["key"], " added to seen keys!")
 
         # Delete useless logs and auto_data from directory
         delete_log_files()
