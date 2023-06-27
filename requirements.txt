@@ -3,3 +3,4 @@ pandas==1.5.3
 numpy==1.22.3
 python-dateutil==2.8.2
 zulip==0.8.2
+robotframework==6.0.2
