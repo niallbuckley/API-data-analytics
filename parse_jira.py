@@ -29,6 +29,7 @@ def delete_log_files():
 
 
 def copy_csv_file(qmetry_key):
+    # This needs to get the XML and convert it into csv first
     file_path = "./logfiles/request_stats_new.csv"
     destination_dir = "./results/" 
     # Extract the filename from the file path
@@ -80,13 +81,13 @@ def __get_test_cycle_list(seen_keys):
             res = __get_test_cycle_attachments(key_obj["key"])
             if res == 0:
                 seen_keys.add(key_obj["key"])
+                print (key_obj["key"], " added to seen keys!")
         try:
             # Extract all the useful data from the logs
             copy_csv_file(key_obj["key"])
             count += 1
         except Exception as e:
             print("Error no csv file! ", e)
-        print (key_obj["key"], " added to seen keys!")
 
         # Delete useless logs and auto_data from directory
         delete_log_files()
