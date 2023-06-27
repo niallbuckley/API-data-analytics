@@ -1,11 +1,19 @@
 import os
-import QMetryConst
 import requests
 import subprocess
 import glob
 import shutil
 import sys
 
+try:
+    OPEN_API_KEY = os.environ['QMETRY_OPEN_API_KEY']
+except:
+    print("Couldn't find env variable - QMETRY_OPEN_API_KEY.")
+    exit()
+
+HEADER={"Content-Type": "application/json","apiKey": OPEN_API_KEY}
+
+ENDP_TEST_CYCLES_BASE="https://qtmcloud.qmetry.com/rest/api/latest/testcycles/"
 
 def download_zip(zip_url, id):
     filename = "auto_data_" + id
@@ -42,7 +50,7 @@ def copy_csv_file(qmetry_key):
 
 
 def __get_test_cycle_attachments(key):
-    response = requests.get(QMetryConst.ENDP_TEST_CYCLES_BASE + key + '/attachment/', headers=QMetryConst.HEADER)
+    response = requests.get(ENDP_TEST_CYCLES_BASE + key + '/attachment/', headers=HEADER)
     if not response.ok:
         print ("ERROR couldn't get attachment for key: ", key, "  ", response.status_code,  " RETRY!!")
         return 1
@@ -61,7 +69,7 @@ def __get_test_cycle_list(seen_keys):
      pload = {"filter":{"projectId":"10453","folderId":521282}}
      params = '?maxResults=100'
      # &startAt=100
-     response = requests.post(QMetryConst.ENDP_TEST_CYCLES_BASE + 'search/' + params,  json=pload, headers=QMetryConst.HEADER)
+     response = requests.post(ENDP_TEST_CYCLES_BASE + 'search/' + params,  json=pload, headers=HEADER)
      if response.ok:
         count = 0
         for key_obj in response.json()["data"]:
