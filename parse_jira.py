@@ -4,6 +4,7 @@ import subprocess
 import glob
 import shutil
 import sys
+import response_stats as rs
 
 try:
     OPEN_API_KEY = os.environ['QMETRY_OPEN_API_KEY']
@@ -26,6 +27,10 @@ def delete_log_files():
     files_to_del = glob.glob(source_pattern)
     for file in files_to_del:
         subprocess.run(["rm", file])
+
+def covert_xml_to_csv(xml_input="./logfiles/output.xml", csv_output="./logfiles/request_stats_new.csv"):
+    if os.path.exists(xml_input):
+        rs.save_requests_statistics_to_csv(xml_input, csv_output)
 
 
 def copy_csv_file(qmetry_key):
@@ -59,7 +64,6 @@ def __get_test_cycle_attachments(key):
     if response.json()["total"] > 0:
         for objct in response.json()["data"]:
             if objct["name"] == 'logfiles.zip':
-                #if seen before. continue
                 print (objct["url"], objct["id"])
                 download_zip(objct["url"], str(objct["id"]))
     return 0
@@ -82,12 +86,14 @@ def __get_test_cycle_list(seen_keys):
             if res == 0:
                 seen_keys.add(key_obj["key"])
                 print (key_obj["key"], " added to seen keys!")
-        try:
-            # Extract all the useful data from the logs
-            copy_csv_file(key_obj["key"])
-            count += 1
-        except Exception as e:
-            print("Error no csv file! ", e)
+
+                covert_xml_to_csv()
+                try:
+                    # Extract all the useful data from the logs
+                    copy_csv_file(key_obj["key"])
+                    count += 1
+                except Exception as e:
+                    print("Error no csv file! ", e)
 
         # Delete useless logs and auto_data from directory
         delete_log_files()
