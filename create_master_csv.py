@@ -31,7 +31,7 @@ for csv_file in csv_files:
         continue
 
     print (f"Processing {csv_file}")
-    one_run = pd.read_csv(csv_file)
+    one_run = pd.read_csv(csv_file, sep=';')
     dfs.append(one_run)
     seen_files.add(os.path.basename(csv_file))
 
