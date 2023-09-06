@@ -37,7 +37,7 @@ for csv_file in csv_files:
 
 try:
     master_csv_file = './results/master_file.csv'
-    all_runs_df = pd.read_csv(master_csv_file)
+    all_runs_df = pd.read_csv(master_csv_file, sep=';')
 
     this_run_df = pd.concat(dfs)
     combined_df = pd.concat([all_runs_df, this_run_df], ignore_index=True)
